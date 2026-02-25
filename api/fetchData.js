@@ -11,13 +11,24 @@ export default async function handler(req, res) {
     const target = `https://paksimdata.ftgmhacks.workers.dev/?number=${clean}`;
 
     try {
-        const response = await fetch(target);
+        // Direct fetch from Vercel Server with proper Headers
+        const response = await fetch(target, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+                'Accept': 'application/json'
+            },
+            signal: AbortSignal.timeout(8000) // 8 seconds timeout
+        });
+
+        if (!response.ok) throw new Error("API Server Not Responding");
+
         const result = await response.json();
 
-        if (result && result.success && result.data.records.length > 0) {
+        if (result && result.success && result.data.records && result.data.records.length > 0) {
             const firstRecord = result.data.records[0];
             
-            // Check if name contains stars (******)
+            // Detecting Stars (******)
             if (firstRecord.full_name.includes('*') || firstRecord.cnic.includes('*')) {
                 return res.status(200).json({
                     success: false,
@@ -36,6 +47,10 @@ export default async function handler(req, res) {
             });
         }
     } catch (e) {
-        return res.status(500).json({ success: false, msg: "Server connection failed." });
+        console.error("Fetch Error:", e.message);
+        return res.status(200).json({ 
+            success: false, 
+            msg: "Connection slow hai ya API down hai. Dubara koshish karain." 
+        });
     }
 }
