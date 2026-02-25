@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART DATA TERMINAL</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #000000; --bg: #ffffff; --text: #1e293b; --border: #e2e8f0; --accent: #25d366; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            padding: 20px;
+        }
+
+        .container { max-width: 900px; margin: 40px auto; }
+
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { font-size: 32px; font-weight: 800; letter-spacing: -1.5px; color: #000; text-transform: uppercase; }
+        header p { color: #64748b; font-size: 14px; margin-top: 5px; }
+
+        /* Search Section */
+        .search-area {
+            background: #f8fafc;
+            padding: 10px;
+            border: 2px solid #000;
+            border-radius: 12px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        button {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 0 35px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover { opacity: 0.8; }
+
+        /* Result Area */
+        #loader { display: none; text-align: center; margin: 30px 0; font-weight: 700; color: #000; }
+
+        .record-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .data-row:last-child { border-bottom: none; }
+
+        .label { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .value { font-weight: 700; color: #000; font-family: 'JetBrains Mono', monospace; }
+
+        /* WhatsApp Error Msg */
+        .whatsapp-box {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+        }
+        .wa-btn {
+            display: inline-block;
+            margin-top: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        /* Services Grid */
+        .services-section { margin-top: 60px; border-top: 1px solid #eee; padding-top: 40px; }
+        .services-section h2 { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 30px; text-transform: uppercase; }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .service-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .service-item:hover { border-color: #000; transform: translateY(-3px); }
+        .service-item i { font-size: 24px; margin-bottom: 10px; color: #000; }
+        .service-item div { font-size: 13px; font-weight: 700; text-transform: uppercase; }
+
+        @media (max-width: 600px) {
+            .search-area { flex-direction: column; padding: 15px; }
+            button { padding: 15px; }
+            .data-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>DATA TERMINAL</h1>
+            <p>Direct Access to Subscriber Identity Information</p>
+        </header>
+
+        <div class="search-area">
+            <input type="number" id="mobileNumber" placeholder="03XXXXXXXXX">
+            <button onclick="startSearch()">FIND DATA</button>
+        </div>
+
+        <div id="loader"><i class="fas fa-spinner fa-spin"></i> FETCHING FROM MAINFRAME...</div>
+
+        <div id="result-area"></div>
+
+        <!-- SERVICES SECTION -->
+        <div class="services-section">
+            <h2>Our Premium Services</h2>
+            <div class="services-grid">
+                <div class="service-item"><i class="fas fa-id-card"></i><div>CNIC Details</div></div>
+                <div class="service-item"><i class="fas fa-users"></i><div>Family Tree</div></div>
+                <div class="service-item"><i class="fas fa-map-marker-alt"></i><div>Live Location</div></div>
+                <div class="service-item"><i class="fas fa-phone-volume"></i><div>Call History</div></div>
+                <div class="service-item"><i class="fas fa-car"></i><div>Vehicle Verify</div></div>
+                <div class="service-item"><i class="fas fa-file-invoice"></i><div>CDR Logs</div></div>
+                <div class="service-item"><i class="fas fa-fingerprint"></i><div>ID Card Copy</div></div>
+                <div class="service-item"><i class="fas fa-home"></i><div>Land Records</div></div>
+                <div class="service-item"><i class="fas fa-shield-alt"></i><div>Police Check</div></div>
+                <div class="service-item"><i class="fas fa-globe"></i><div>Travel History</div></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    async function startSearch() {
+        const ph = document.getElementById('mobileNumber').value;
+        const resArea = document.getElementById('result-area');
+        const loader = document.getElementById('loader');
+
+        if (ph.length < 10) {
+            alert("Enter a valid number.");
+            return;
+        }
+
+        resArea.innerHTML = '';
+        loader.style.display = 'block';
+
+        try {
+            const response = await fetch(`/api/fetchData?number=${ph}`);
+            const result = await response.json();
+
+            if (result.success) {
+                result.records.forEach(rec => {
+                    resArea.innerHTML += `
+                        <div class="record-card">
+                            <div class="data-row"><div class="label">Full Name</div><div class="value">${rec.full_name.toUpperCase()}</div></div>
+                            <div class="data-row"><div class="label">CNIC / ID</div><div class="value">${rec.cnic}</div></div>
+                            <div class="data-row"><div class="label">Address</div><div class="value">${(rec.address || "NOT FOUND").toUpperCase()}</div></div>
+                        </div>
+                    `;
+                });
+            } else {
+                resArea.innerHTML = `
+                    <div class="whatsapp-box">
+                        <i class="fas fa-user-secret" style="font-size:40px; margin-bottom:15px;"></i><br>
+                        ${result.msg}<br>
+                        <a href="https://wa.me/923219233858?text=I%20need%20data%20for%20number:%20${ph}" class="wa-btn">
+                            <i class="fab fa-whatsapp"></i> Contact on WhatsApp
+                        </a>
+                    </div>
+                `;
+            }
+        } catch (e) {
+            resArea.innerHTML = `<div class="whatsapp-box">Connection Error. Please try again.</div>`;
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+</script>
+</body>
+              </html>
